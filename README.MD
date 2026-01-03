@@ -1,12 +1,12 @@
 # AI Context Dump AOT
 
-[English](#english) | [����](#chinese)
+[English](#english) | [中文](#chinese)
 
 <a name="english"></a>
 
 ## English
 
-**AI Context Dump AOT** is a high-performance, native tool written in F# using **.NET 10 Ahead-of-Time (AOT)** compilation. It dumps a project��s directory structure and source code into an AI-friendly text format.
+**AI Context Dump AOT** is a high-performance, native tool written in F# using **.NET 10 Ahead-of-Time (AOT)** compilation. It dumps a project’s directory structure and source code into an AI-friendly text format.
 
 ### Why F# AOT Version?
 
@@ -37,14 +37,7 @@ Compared to the original Python version, this version offers significant advanta
 Open PowerShell or CMD:
 
 ```powershell
-.\ai_context_dump.exe
-
-```
-
-*(Optional: Pass a custom settings path)*
-
-```powershell
-.\ai_context_dump.exe my_config.jsonc
+.\AiContextDumpAOT.exe
 
 ```
 
@@ -54,7 +47,7 @@ Open Terminal (ensure executable permissions):
 
 ```bash
 chmod +x ai_context_dump
-./ai_context_dump
+./AiContextDumpAOT
 
 ```
 
@@ -145,63 +138,63 @@ These derived rules are used to prune directory traversal.
 
 <a name="chinese"></a>
 
-## ���� (Chinese)
+## 中文 (Chinese)
 
-**AI Context Dump AOT** ��һ��ʹ�� F# ������������ **.NET 10 Ahead-of-Time (AOT)** ��������ĸ�����ԭ�����ߡ������Խ���Ŀ��Ŀ¼�ṹ��Դ����ת��Ϊ AI �Ѻõ��ı��ļ���
+**AI Context Dump AOT** 是一款使用 F# 开发，并基于 **.NET 10 Ahead-of-Time (AOT)** 技术编译的高性能原生工具。它可以将项目的目录结构和源代码转储为 AI 友好的文本文件。
 
-### Ϊʲôѡ�� F# AOT �汾��
+### 为什么选择 F# AOT 版本？
 
-�����ԭ���� Python �汾���˰汾���������������ƣ�
+相比于原生的 Python 版本，此版本具有以下显著优势：
 
-* **��������**��ͨ�� .NET 10 AOT ����Ϊԭ�������롣�޽������������ڴ������ģ�����ʱ��Ŀ¼�������ļ���ȡ�ٶȼ��졣
-* **����������**�����ɵ��Ƕ����Ŀ�ִ���ļ���Ŀ��������谲װ Python ��������������Ҫ��װ .NET Runtime��
-* **�����ڴ�ռ��**��AOT ����Զ������ļ������˸߶��Ż�������ʱ�ڴ�ռ�ü�С��
-* **��Ч����**������ F# ���첽�������ԣ������������ļ�����Ч�ʡ�
-
----
-
-### ����Ҫ��
-
-* **����**����������ֻ���ִ���ļ��� `settings.jsonc` �����ļ���
-* **����**������������б��룬��Ҫ��װ .NET 10 SDK��
+* **极速性能**：通过 .NET 10 AOT 编译为原生机器码。无解释器开销，在处理大规模代码库时，目录遍历和文件读取速度极快。
+* **零依赖运行**：生成的是独立的可执行文件。目标机器无需安装 Python 环境，甚至不需要安装 .NET Runtime。
+* **极低内存占用**：AOT 编译对二进制文件进行了高度优化，运行时内存占用极小。
+* **高效并行**：利用 F# 的异步并行特性，极大提升了文件处理效率。
 
 ---
 
-### ���ٿ�ʼ
+### 环境要求
 
-1. **����**���� **Release** ҳ�����ض�Ӧ��ƽ̨�Ķ������ļ���Windows/macOS/Linux����
-2. **����**�������صĿ�ִ���ļ������ڰ��� `settings.jsonc` ���ļ����С�
-3. **����**��
+* **运行**：零依赖！只需可执行文件和 `settings.jsonc` 配置文件。
+* **编译**：如果你想自行编译，需要安装 .NET 10 SDK。
 
-#### **Windows ƽ̨**
+---
 
-�� PowerShell �� CMD��
+### 快速开始
+
+1. **下载**：从 **Release** 页面下载对应你平台的二进制文件（Windows/macOS/Linux）。
+2. **配置**：将下载的可执行文件放置在包含 `settings.jsonc` 的文件夹中。
+3. **运行**：
+
+#### **Windows 平台**
+
+打开 PowerShell 或 CMD：
 
 ```powershell
-.\ai_context_dump.exe
+.\AiContextDumpAOT.exe
 
 ```
 
-#### **macOS / Linux ƽ̨**
+#### **macOS / Linux 平台**
 
-���նˣ���ȷ����ִ��Ȩ�ޣ���
+打开终端（需确保可执行权限）：
 
 ```bash
-# ����ִ��Ȩ��
+# 赋予执行权限
 chmod +x ai_context_dump
-# ����
-./ai_context_dump
+# 运行
+./AiContextDumpAOT
 
 ```
 
 ---
 
-### ���б��� (Build from Source)
+### 自行编译 (Build from Source)
 
-����㰲װ�� .NET 10 SDK�����������������
+如果你安装了 .NET 10 SDK，可以运行以下命令：
 
 ```bash
-# Ϊ�ض�ƽ̨���� AOT �Ż��汾
+# 为特定平台发布 AOT 优化版本
 dotnet publish -c Release -r win-x64 --self-contained
 # macOS (Apple Silicon)
 dotnet publish -c Release -r osx-arm64 --self-contained
@@ -210,73 +203,73 @@ dotnet publish -c Release -r linux-x64 --self-contained
 
 ```
 
-�����Ķ�����ִ���ļ��������� `publish` Ŀ¼�¡�
+编译后的独立可执行文件将生成在 `publish` 目录下。
 
 ---
 
-### ����˵�� (`settings.jsonc`)
+### 配置说明 (`settings.jsonc`)
 
-**�ر�ע��**�������߱������ `settings.jsonc` ʹ�á�
+**特别注意**：本工具必须配合 `settings.jsonc` 使用。
 
-�����ļ�֧�ִ�ע�͵� JSON������ע�ͣ����� `//` �� `#` ��ͷ���н������ԡ�
+配置文件支持带注释的 JSON（整行注释）。以 `//` 或 `#` 开头的行将被忽略。
 
-#### iter_root (�� root)
+#### iter_root (或 root)
 
-* `iter_root`: �����ĸ�Ŀ¼�����·�������·����
-�����ݣ����ȱ�� `iter_root`�����߽��˶����� `root`��
+* `iter_root`: 遍历的根目录（相对路径或绝对路径）
+向后兼容：如果缺少 `iter_root`，工具将退而查找 `root`。
 
 #### os
 
-����������ļ�·������ʾ���
+控制输出中文件路径的显示风格：
 
-* `auto`: ��ǰ����ϵͳ���
-* `posix`: ��б�� `/`
-* `windows`: ��б�� `\`
-**ע�⣺** ��Ӱ��·���ġ���ʾ�����ļ�ͷ�Ϳ���̨���������Ӱ���ڲ�ƥ�䡣
+* `auto`: 当前操作系统风格
+* `posix`: 正斜杠 `/`
+* `windows`: 反斜杠 `\`
+**注意：** 仅影响路径的“显示”（文件头和控制台输出），不影响内部匹配。
 
 #### output
 
 * `output.mode`: `structure | code | both | split`
-* `output.single_file`: ���� `structure | code | both` ģʽ
-* `output.structure_file` �� `output.code_file`: ���� `split` ģʽ
-* `output.path_style`: ������ʾ��·�������·�����Ǿ���·����
+* `output.single_file`: 用于 `structure | code | both` 模式
+* `output.structure_file` 和 `output.code_file`: 用于 `split` 模式
+* `output.path_style`: 控制显示的路径是相对路径还是绝对路径：
 * `relative`:
-* ���ļ�����ͷ�� (`// # File Path:`)��·������� `iter_root`
-* �ڿ���̨����У�·������ڳ�������Ŀ¼
+* 在文件内容头部 (`// # File Path:`)，路径相对于 `iter_root`
+* 在控制台输出中，路径相对于程序所在目录
 
 
-* `absolute`: ʹ�þ���·��
+* `absolute`: 使用绝对路径
 
 
 
-**ע�⣺** ����ļ�ʼ�������ڿ�ִ���ļ����ڵ�Ŀ¼�¡�
+**注意：** 输出文件始终生成在可执行文件所在的目录下。
 
 #### clipboard
 
-* `clipboard.enabled`: ���Ϊ true��������ɺ��Խ� `clipboard.text` �����������塣
-* `clipboard.text`: Ԥ����� Prompt �ı���
+* `clipboard.enabled`: 如果为 true，生成完成后尝试将 `clipboard.text` 拷贝至剪贴板。
+* `clipboard.text`: 预定义的 Prompt 文本。
 
 #### ignore
 
-* `ignore.extensions`: ����չ�����ԣ������ִ�Сд����չ���ᱻͳһ����ΪСд��ǿ���� `.` ��ͷ��
-* `ignore.patterns`: ʹ�� Glob ģʽ����
+* `ignore.extensions`: 按扩展名忽略（不区分大小写；扩展名会被统一处理为小写并强制以 `.` 开头）
+* `ignore.patterns`: 使用 Glob 模式忽略
 
-**ģʽƥ����Ϊ**
+**模式匹配行为**
 
-* ���ģʽ���� `/`����ƥ�����·����POSIX ��ʽ������� `iter_root`����
-* ����ƥ�䣺
-* �ļ�/�ļ�������basename��
-* ·���е��κ�һ��
-ƥ�䲻���ִ�Сд��
+* 如果模式包含 `/`，则匹配相对路径（POSIX 形式，相对于 `iter_root`）。
+* 否则匹配：
+* 文件/文件夹名（basename）
+* 路径中的任何一段
+匹配不区分大小写。
 
 
 
-**Ŀ¼��֦��Ϊ**
-����ģʽ��������ʽ��βʱ���Ż�����Ŀ¼��֦����
+**目录剪枝行为**
+仅当模式以以下形式结尾时，才会生成目录剪枝规则：
 
 * `xxx/`
 * `xxx/*`
-��Щ���������ڱ���ʱֱ�������ض�Ŀ¼���Ӷ����Ч�ʡ�
+这些规则用于在遍历时直接跳过特定目录，从而提高效率。
 
 ---
 
