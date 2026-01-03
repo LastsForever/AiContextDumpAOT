@@ -41,12 +41,12 @@ Open PowerShell or CMD:
 
 ```
 
-#### **macOS / Linux**
+#### **macOS / Linux**（*Will be added in future)
 
 Open Terminal (ensure executable permissions):
 
 ```bash
-chmod +x ai_context_dump
+chmod +x AiContextDumpAOT
 ./AiContextDumpAOT
 
 ```
