@@ -1,10 +1,10 @@
 # AI Context Dump AOT
 
-[English](#english) | [中文](#chinese)
+[English Version](#english) | [中文版本](#chinese)
 
 <a name="english"></a>
 
-## English
+## English Version
 
 **AI Context Dump AOT** is a high-performance, native tool written in F# using **.NET 10 Ahead-of-Time (AOT)** compilation. It dumps a project’s directory structure and source code into an AI-friendly text format.
 
@@ -41,14 +41,7 @@ Open PowerShell or CMD:
 
 ```
 
-*(Optional: Pass a custom settings path)*
-
-```powershell
-.\ai_context_dump.exe my_config.jsonc
-
-```
-
-#### **macOS / Linux**
+#### **macOS / Linux** (*Note: Will be added in future)
 
 Open Terminal (ensure executable permissions):
 
@@ -145,7 +138,7 @@ These derived rules are used to prune directory traversal.
 
 <a name="chinese"></a>
 
-## 中文 (Chinese)
+## 中文版本
 
 **AI Context Dump AOT** 是一款使用 F# 开发，并基于 **.NET 10 Ahead-of-Time (AOT)** 技术编译的高性能原生工具。它可以将项目的目录结构和源代码转储为 AI 友好的文本文件。
 
