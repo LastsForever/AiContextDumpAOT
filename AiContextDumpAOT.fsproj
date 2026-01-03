@@ -1,11 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<PublishAot>true</PublishAot>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PublishAot>true</PublishAot>
+		<PublishTrimmed>true</PublishTrimmed>
+		<PublishSingleFile>true</PublishSingleFile>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<SelfContained>true</SelfContained>
 		<InvariantGlobalization>true</InvariantGlobalization>
 		<StripSymbols>true</StripSymbols>
 	</PropertyGroup>

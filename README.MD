@@ -37,14 +37,10 @@ Compared to the original Python version, this version offers significant advanta
 Open PowerShell or CMD:
 
 ```powershell
-.\ai_context_dump.exe
+.\AiContextDumpAOT.exe
 
 ```
 
-*(Optional: Pass a custom settings path)*
-
-```powershell
-.\ai_context_dump.exe my_config.jsonc
 
 ```
 
@@ -53,8 +49,8 @@ Open PowerShell or CMD:
 Open Terminal (ensure executable permissions):
 
 ```bash
-chmod +x ai_context_dump
-./ai_context_dump
+chmod +x AiContextDumpAOT
+./AiContextDumpAOT
 
 ```
 
@@ -178,7 +174,7 @@ These derived rules are used to prune directory traversal.
 打开 PowerShell 或 CMD：
 
 ```powershell
-.\ai_context_dump.exe
+.\AiContextDumpAOT.exe
 
 ```
 
@@ -188,9 +184,9 @@ These derived rules are used to prune directory traversal.
 
 ```bash
 # 赋予执行权限
-chmod +x ai_context_dump
+chmod +x AiContextDumpAOT
 # 运行
-./ai_context_dump
+./AiContextDumpAOT
 
 ```
 
