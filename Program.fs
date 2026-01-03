@@ -409,17 +409,17 @@ module App =
                     IO.copyToClipboard s.Clipboard.Text |> ignore
 
                 // --- 控制台简洁输出 ---
-                printfn "================================  ai-context-dump ================================"
-                printfn "Generated files report:\n"
+                Console.WriteLine "================================  ai-context-dump ================================"
+                Console.WriteLine "Generated files report:\n"
                 for (name, content) in reportData do 
                     let charCount = content.Length
                     let tokens = estimateTokens content
-                    printfn " - Path: %s" name
-                    printfn "   Chars: %d" charCount
-                    printfn "   Tokens: ~%d\n" tokens
+                    Console.WriteLine $" - Path: {name}"
+                    Console.WriteLine $"   Chars: {charCount}"
+                    Console.WriteLine $"   Tokens: ~{tokens}"
                 
-                printfn "ai-context-dump finished successfully."
-                printfn "=================================================================================="
+                Console.WriteLine "ai-context-dump finished successfully."
+                Console.WriteLine "=================================================================================="
                 0
 
 // ==========================================

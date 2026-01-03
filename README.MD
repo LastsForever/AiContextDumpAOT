@@ -44,7 +44,7 @@ Open PowerShell or CMD:
 
 ```
 
-#### **macOS / Linux**
+#### **macOS / Linux** (Will be added in future.)
 
 Open Terminal (ensure executable permissions):
 
