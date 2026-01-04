@@ -238,14 +238,16 @@
     // they only cause directories to be skipped AFTER entering them.
     //
     "patterns": [
-      ".git*",
-      "bin*",
-      "obj*",
-      ".vs*",
-      ".idea*",
-      "structure&code.txt",
-      "ai-context-dump*",
-      "tools*"
+        ".git*",
+        "bin*",
+        "obj*",
+        ".vs*",
+        ".idea*",
+        "structure&code.txt",
+        "ai-context-dump*",
+        "tools*",
+        "node_modules*",
+        "experimental*"
     ]
   }
 }
