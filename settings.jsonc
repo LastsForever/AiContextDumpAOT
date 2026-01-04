@@ -95,7 +95,7 @@
     //
     // Path is RELATIVE to the directory containing the Python script.
     //
-    "single_file": ".\\structure&code.txt",
+    "single_file": ".\\structure&code.md",
 
     // ----------------------------------------------------------
     // Split output file paths
@@ -105,8 +105,8 @@
     //
     // Paths are RELATIVE to the directory containing the Python script.
     //
-    "structure_file": ".\\structure.txt",
-    "code_file": ".\\code.txt",
+    "structure_file": ".\\structure.md",
+    "code_file": ".\\code.md",
 
     // ----------------------------------------------------------
     // Path display style (DISPLAY ONLY)

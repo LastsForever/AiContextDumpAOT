@@ -5,6 +5,7 @@ open System.Text.Json
 open System.Text.RegularExpressions
 open System.Diagnostics
 open System.Runtime.InteropServices
+open System.Globalization
 
 // ==========================================
 // 1. 基础辅助与 Null 安全处理
@@ -54,6 +55,14 @@ module Util =
             | _ -> sb.Append(c) |> ignore
         )
         sb.Append("$").ToString()
+
+    let toAnchor (path: string) = 
+        path.ToLowerInvariant()
+            .Replace("\\", "-")
+            .Replace("/", "-")
+            .Replace(".", "")
+            .Replace(" ", "-")
+
 
 // ==========================================
 // 2. 配置模型
@@ -133,9 +142,9 @@ module JsonConfig =
         let outEl = tryProp "output" root
         let output = 
             { Mode = outEl |> Option.bind (tryProp "mode") |> getStr "both" |> fun s -> s.ToLowerInvariant()
-              SingleFile = outEl |> Option.bind (tryProp "single_file") |> getStr "structure&code.txt"
-              StructureFile = outEl |> Option.bind (tryProp "structure_file") |> getStr "structure.txt"
-              CodeFile = outEl |> Option.bind (tryProp "code_file") |> getStr "code.txt"
+              SingleFile = outEl |> Option.bind (tryProp "single_file") |> getStr "structure&code.md"
+              StructureFile = outEl |> Option.bind (tryProp "structure_file") |> getStr "structure.md"
+              CodeFile = outEl |> Option.bind (tryProp "code_file") |> getStr "code.md"
               PathStyle = outEl |> Option.bind (tryProp "path_style") |> getStr "relative" |> fun s -> s.ToLowerInvariant() }
 
         let cbEl = tryProp "clipboard" root
@@ -290,41 +299,91 @@ module Structure =
 
     let render (iterRoot: string) (idx: System.Collections.Generic.Dictionary<string, ResizeArray<string>>) : string array =
         let lines = ResizeArray<string>()
-        lines.Add("## Project structure\n\n")
+        lines.Add("# Project Context\n\n## 1. Directory Structure  \n")
         
         let fullRoot = Path.GetFullPath(iterRoot).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
         
-        // 只有当存在有效文件时才渲染树
         if idx.Count > 0 then
-            lines.Add(NullUtils.safeFileName(fullRoot) + "/\n")
+            // 根目录也使用列表形式
+            lines.Add(sprintf "- %s/\n" (NullUtils.safeFileName fullRoot))
 
             let rec recRender (node: string) (depth: int) =
                 let nodeFull = Path.GetFullPath(node).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                 if idx.ContainsKey(nodeFull) then
-                    for child in idx.[nodeFull] do
+                    // 这里的 childs 排序可以确保输出更整齐
+                    let sortedChildren = idx.[nodeFull] |> Seq.sortWith (fun a b ->
+                        let isDirA = Directory.Exists(a)
+                        let isDirB = Directory.Exists(b)
+                        if isDirA <> isDirB then if isDirA then -1 else 1
+                        else String.Compare(a, b)
+                    )
+
+                    for child in sortedChildren do
+                        // 关键：每一级缩进两个空格，并加上短横线
                         let indent = String.replicate depth "  "
                         let isDir = Directory.Exists(child)
-                        let suffix = if isDir then "/" else ""
-                        lines.Add(sprintf "%s%s%s\n" indent (NullUtils.safeFileName child) suffix)
-                        if isDir then recRender child (depth + 1)
+                        let fileName = NullUtils.safeFileName child
+                        
+                        if isDir then
+                            // 目录：显示为 - Folder/
+                            lines.Add(sprintf "%s- %s/\n" indent fileName)
+                            recRender child (depth + 1)
+                        else
+                            // 文件：显示为 - [File](#Anchor)
+                            let relPath = Path.GetRelativePath(iterRoot, child)
+                            let anchor = Util.toAnchor relPath
+                            lines.Add(sprintf "%s- [%s](#%s)\n" indent fileName anchor)
             
             recRender fullRoot 1
         else
-            lines.Add("[No files matching the criteria]\n")
+            lines.Add("- [No files matching the criteria]\n")
         
-        lines.Add("\n")
+        lines.Add("---\n")
         lines.ToArray()
 
 // ==========================================
 // 6. 文件内容处理
 // ==========================================
 module FileDump =
+    let private getMarkdownLang (filePath: string) =
+        let ext = NullUtils.safeExtension(filePath).ToLowerInvariant()
+        match ext with
+        | ".fs" | ".fsx" | ".fsi"          -> "fsharp"
+        | ".cs"                           -> "csharp"
+        | ".js" | ".mjs" | ".cjs"         -> "javascript"
+        | ".ts" | ".mts"                  -> "typescript"
+        | ".py" | ".pyw"                  -> "python"
+        | ".go"                           -> "go"
+        | ".rs"                           -> "rust"
+        | ".cpp" | ".cxx" | ".cc" | ".h"  -> "cpp"
+        | ".c"                            -> "c"
+        | ".html" | ".htm"                -> "html"
+        | ".css" | ".scss"                -> "css"
+        | ".json" | ".jsonc"              -> "json"
+        | ".xml" | ".csproj" | ".fsproj"  -> "xml"
+        | ".yaml" | ".yml"                -> "yaml"
+        | ".toml"                         -> "toml"
+        | ".ini" | ".editorconfig"        -> "ini"
+        | ".sql"                          -> "sql"
+        | ".sh" | ".bash"                 -> "bash"
+        | ".ps1"                          -> "powershell"
+        | ".md" | ".markdown"             -> "markdown"
+        | ".dockerfile"                   -> "dockerfile"
+        | _                               -> "text"
+
     let dumpFile (iterRoot: string) (s: Settings) (file: string) : string =
-        let rel = Structure.formatRel iterRoot file s.OsStyle
-        let pathDisplay = if s.Output.PathStyle = "absolute" then Path.GetFullPath(file) else rel
-        let header = sprintf "//\n//\t# File Path: %s #\n//\n\n" pathDisplay
-        let content = try File.ReadAllText(file, Encoding.UTF8) with _ -> "// [Skipped: unreadable or binary file]\n"
-        header + content + "\n\n"
+            let rel = Path.GetRelativePath(iterRoot, file)
+            let anchor = Util.toAnchor rel
+            let pathDisplay = if s.Output.PathStyle = "absolute" then Path.GetFullPath(file) else Structure.formatRel iterRoot file s.OsStyle
+            let fileLang = getMarkdownLang file
+
+            let header = $"\n<a name=\"{anchor}\"></a>\n### 📄 Path: {pathDisplay}  \n\n```{fileLang}  \n"
+            let content = 
+                try 
+                    File.ReadAllText(file, Encoding.UTF8)
+                with
+                    _ -> "- ### [Skipped: unreadable or binary file]  \n"
+            header + content + "\n```"
 
 // ==========================================
 // 7. 系统交互 (IO Boundary)
@@ -355,9 +414,11 @@ module IO =
 // ==========================================
 module App =
     // 简单的 Token 估算函数
-    let estimateTokens (text: string) =
-        let count = float text.Length / 4.0
-        int (System.Math.Ceiling(count))
+    let estimateTokensString (text: string) =
+        float text.Length / 4.0
+        |> Math.Ceiling
+        |> int
+        |> _.ToString("N0", CultureInfo.InvariantCulture)
 
     let run (args: string array) : int =
         let settingsFile = if args.Length > 0 then args.[0] else "settings.jsonc"
@@ -381,7 +442,7 @@ module App =
                 
                 let rawContents = files |> Array.Parallel.map (FileDump.dumpFile s.IterRoot s)
                 let codeContents = rawContents |> Array.choose NullUtils.strToOpt
-                let allCodeLines: string array = Array.append [| "## Files\n\n" |] codeContents
+                let allCodeLines: string array = Array.append [| "## 2. File Contents" |] codeContents
 
                 // 存储生成结果用于统计
                 let reportData = ResizeArray<string * string>()
@@ -409,17 +470,13 @@ module App =
                     IO.copyToClipboard s.Clipboard.Text |> ignore
 
                 // --- 控制台简洁输出 ---
-                Console.WriteLine "================================  ai-context-dump ================================"
-                Console.WriteLine "Generated files report:\n"
-                for (name, content) in reportData do 
-                    let charCount = content.Length
-                    let tokens = estimateTokens content
-                    Console.WriteLine $" - Path: {name}"
-                    Console.WriteLine $"   Chars: {charCount}"
-                    Console.WriteLine $"   Tokens: ~{tokens}"
-                
-                Console.WriteLine "ai-context-dump finished successfully."
-                Console.WriteLine "=================================================================================="
+                Console.WriteLine "[REPORT] Generated Files:\n"
+                for (name, content) in reportData do
+                    let charCount = content.Length.ToString("N0", CultureInfo.InvariantCulture)
+                    let tokens = estimateTokensString content
+                    Console.WriteLine $"\t● Path:  {name}"
+                    Console.WriteLine $"\t  Size:  {charCount} chars"
+                    Console.WriteLine $"\t  Stats: ~{tokens} tokens\n"
                 0
 
 // ==========================================
@@ -427,4 +484,11 @@ module App =
 // ==========================================
 [<EntryPoint>]
 let main argv =
-    App.run argv
+    Console.WriteLine "\n================================  ai-context-dump ================================"
+    let startTimestamp = Stopwatch.GetTimestamp()
+    let returnCode = App.run argv
+    let elapsedTime = Stopwatch.GetElapsedTime(startTimestamp).TotalSeconds.ToString("F3", CultureInfo.InvariantCulture)
+    Console.WriteLine "----------------------------------------------------------------------------------"
+    Console.WriteLine $"[DONE] Processed in {elapsedTime} s."
+    Console.WriteLine "==================================================================================\n"
+    returnCode
